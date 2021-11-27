@@ -8,12 +8,14 @@ def filterData():
         currentRow = values[i]
         datePlate = currentRow[3].date()
 
-        rowData = f"Mr. {currentRow[0]} bearing registration number {currentRow[1]}, enrolled in program+ {currentRow[2]} has appeared in final exams on {datePlate.strftime('%d')}-{datePlate.strftime('%b')}-{datePlate.strftime('%y')}. Student has successfully qualified the following courses: Microsoft Excel, VBA, SQL, Power BI, and have scored a grand total of {currentRow[-2]} marks."
+        name, regNo, program, total, result = currentRow[0], currentRow[1], currentRow[2], currentRow[-2], currentRow[-1]
+        day, month, year = datePlate.strftime('%d'), datePlate.strftime('%b'), datePlate.strftime('%y')
 
-        if currentRow[-1] == "F":
-            rowData += f"But he failed the {currentRow[2]} course. He may have to reappear in this exam." 
+        rowData = f"Mr. {name} bearing registration number {regNo}, enrolled in program+ {program} has appeared in final exams on {day}-{month}-{year}. Student has successfully qualified the following courses: Microsoft Excel, VBA, SQL, Power BI, and have scored a grand total of {total} marks."
+
+        if result == "F":
+            rowData += f"But he failed the {program} course. He may have to reappear in this exam." 
         
-        name = currentRow[0]
         file = open(f"{name}.txt", "w")
         file.write(rowData)
         file.close()
