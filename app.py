@@ -8,15 +8,30 @@ def filterData():
         currentRow = values[i]
         datePlate = currentRow[3].date()
 
-        name, regNo, program, total, result = currentRow[0], currentRow[1], currentRow[2], currentRow[-2], currentRow[-1]
-        day, month, year = datePlate.strftime('%d'), datePlate.strftime('%b'), datePlate.strftime('%y')
-
-        rowData = f"Mr. {name} bearing registration number {regNo}, enrolled in program+ {program} has appeared in final exams on {day}-{month}-{year}. Student has successfully qualified the following courses: Microsoft Excel, VBA, SQL, Power BI, and have scored a grand total of {total} marks."
-
-        if result == "F":
-            rowData += f"But he failed the {program} course. He may have to reappear in this exam." 
+        stdinf = {
+            "name":currentRow[0],
+            "regNo":currentRow[1],
+            "program":currentRow[2],
+            "total" :currentRow[-2],
+            "result":currentRow[-1],
+            "day":datePlate.strftime('%d'),
+            "month":datePlate.strftime('%b'),
+            "year":datePlate.strftime('%y'),
+            "courses": list(filter(lambda x:type(x)!=float, values[1])),
+            "hasFailed":[]
+        }
         
-        file = open(f"{name}.txt", "w")
+        rowData = f"""Mr. {stdinf["name"]} bearing registration number {stdinf["regNo"]}, enrolled in program+ {stdinf["program"]} has appeared in final exams on {stdinf["day"]}-{stdinf["month"]}-{stdinf["year"]}. Student has successfully qualified the following courses: {", ".join(stdinf["courses"])}, and have scored a grand total of {stdinf["total"]} marks."""
+
+        c = 0
+        if stdinf["result"] == "F":
+            for i in range(5, len(currentRow)-1, 2):
+                if currentRow[i] == "Fail":
+                    stdinf["hasFailed"].append(stdinf["courses"][c])
+                c += 1 
+            rowData += f"""But he failed the {", ".join(stdinf["hasFailed"])} course. He may have to reappear in this exam."""
+
+        file = open(f"{stdinf['name']}.txt", "w")
         file.write(rowData)
         file.close()
 
